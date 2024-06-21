@@ -220,6 +220,12 @@ public class Fernflower implements IDecompiledData {
   }
 
   static {
-    Init.init();
+    // TODO Need for android
+    try {
+      Init.init();
+    }catch (Exception e){
+      System.err.println("Unable to call Init.init() inside FernFlower");
+      e.printStackTrace();
+    }
   }
 }

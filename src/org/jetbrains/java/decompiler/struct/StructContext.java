@@ -12,10 +12,7 @@ import org.jetbrains.java.decompiler.struct.gen.generics.GenericMain;
 import org.jetbrains.java.decompiler.struct.gen.generics.GenericMethodDescriptor;
 import org.jetbrains.java.decompiler.util.DataInputFullStream;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.SeekableByteChannel;
@@ -25,13 +22,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class StructContext {
+  public static String STRUCT_CLASS_PATH = null;
   private static volatile StructClass SENTINEL_CLASS;
 
   static StructClass getSentinel() {
     if (SENTINEL_CLASS == null) {
       synchronized (StructContext.class) {
         if (SENTINEL_CLASS == null) {
-          try (final InputStream stream = StructContext.class.getResourceAsStream("StructContext.class")) {
+          try (final InputStream stream = STRUCT_CLASS_PATH != null ? new FileInputStream(STRUCT_CLASS_PATH) : StructContext.class.getResourceAsStream("StructContext.class")) {
             byte[] data = stream.readAllBytes();
             SENTINEL_CLASS = StructClass.create(new DataInputFullStream(data), false);
           } catch (final IOException ex) {
